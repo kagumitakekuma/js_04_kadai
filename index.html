@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>れんらくちょう</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>れんらくちょうアプリ</header>
+
+    <div class="container">
+      <div class="left">
+   <p class="message">家庭からの連絡事項</p>
+    <div> <!--日付 -->
+      ◆日付
+      <input type="date" id="date" />
+    </div>
+
+    <div>     <!-- 名前 -->◆名前
+      <input type="text" id="username" />
+    </div>
+    <div>     <!-- 体調 -->◆健康状態
+      <input type="text" id="condition" />
+    </div>
+    <div>     <!-- 体温 -->◆体温
+      <input type="text" id="temperature" />
+    </div>
+
+    <div><!-- きげん -->◆機嫌
+      <select id="mood">
+       <option value="first1" selected>選択してください</option>    
+       <option value="good1">良</option>    
+       <option value="usually1">普通</option>    
+       <option value="bad1">悪</option>    
+    
+      </select>
+
+     <div><!-- はいせつ --> ◆排泄
+      <select id="excretion">
+       <option value="first" selected>選択してください</option>    
+       <option value="usually2">普通</option>    
+       <option value="soft">軟</option>    
+       <option value="hard">固</option>    
+       <option value="stomach">下痢</option>
+</select> 
+    </div>
+
+<div>◆お迎えの方
+    <select id="who">
+       <option value="first" selected>選択してください</option>    
+       <option value="mother">母</option>    
+       <option value="father">父</option>    
+       <option value="grandmother">祖母</option>    
+       <option value="grandfather">祖父</option>    
+</select></div>
+
+<div>◆お迎え時間
+
+    <input type="time" id="pickUpTime">
+    </div>
+
+
+
+    <div>
+      <!-- テキストエリア -->
+      <p>◆フリースペース</p>
+      <textarea name="" id="text" cols="60" rows="10"></textarea>
+    </div>
+
+    <div>
+      <!-- 送信ボタン -->
+      <button id="send">反映</button>
+    </div>
+    </div>　　　　
+    <!-- ここまでが、左側 -->
+   </div>
+      <div class="right">
+     <div id="output"></div>
+    </div>
+     
+    </div>
+</div>
+
+<footer id="footer"></footer>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- JQuery -->
+    <!--** 以下Firebase **-->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <!-- firebaseのverが変わるので、数字がどんどん変化します🙋‍♀️ -->
+    <!-- ここにfirebaseのscriptを貼り付ける -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+
+    <script>
+      // Your web app's Firebase configuration
+     var firebaseConfig = {
+        apiKey: "",
+        authDomain:"", 
+        projectId: "",
+        storageBucket:"", 
+        messagingSenderId:"", 
+        appId: "",
+        databaseURL:"",
+        
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      //firebaseのデーターベース（保存させる場所）を使う
+      const newPostRef = firebase.database().ref();
+
+      // ここから下にjqueryの処理を書いて練習します
+      // 送信ボタンをクリックされたら次の処理をする
+      $("#send").on("click", function () {
+        // データを登録で送る
+        newPostRef.push({
+          date:$("#date").val(),
+          username: $("#username").val(), //名前
+          condition: $("#condition").val(), //健康状態
+          temperature: $("#temperature").val(), //体温
+          mood: $("#mood option:selected").text(), //機嫌
+          excretion: $("#excretion option:selected").text(), //排泄
+          who: $("#who option:selected").text(), //お迎え
+          pickUpTime: $("#pickUpTime").val(), //時間
+          text: $("#text").val(), //テキストエリア
+        });
+        $("#date").val("");
+        $("#username").val(""); //空にする
+        $("#condition").val(""); //空にする
+        $("#temperature").val(""); //空にする
+        $("#mood option.selected").text();
+        $("#excretion").val(""); //空にする       
+        $("#who").val(""); //空にする       
+        $("#pickUpTime").val(""); //空にする       
+        $("#text").val(""); //空にする
+      });
+
+ $("#send").on("click", ()=>{
+   alert("今日も楽しく過ごしましょう！！");
+ })
+      // 受信処理
+      newPostRef.on("child_added", function (data) {
+        let v = data.val(); //ここに保存されたデータが全て入ってくる
+        // console.log(v); //vの変数に入っているオブジェクトを全てみる
+
+        let str = `<p>${v.date}/${v.username}/${v.condition}/${v.temperature}/${v.mood}/${v.excretion}/${v.who}/${v.pickUpTime}/${v.text}</p>`;
+
+        // ここでデータをhtmlに埋め込む
+        $("#output").prepend(str);
+      });
+
+      // $("#text").on("keydown", function (e) {
+      //   console.log(e, "event");
+      // });
+        </script>
+  </body>
+</html>
+
+
+
+
+
+
